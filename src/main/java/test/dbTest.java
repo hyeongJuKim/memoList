@@ -2,6 +2,7 @@ package test;
 
 import java.sql.DriverManager;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
 import org.junit.Test;
@@ -15,7 +16,7 @@ public class dbTest extends TestCase {
 	@Test
 	public void testName() {
 
-			String sql = "SHOW DATABASES";
+			String sql = "SELECT * FROM MEMO";
 			ResultSetProcess resultSetProcess = new PrintResult();
 			
 			getList(sql, resultSetProcess)
@@ -48,7 +49,7 @@ public class dbTest extends TestCase {
 		
 	}
 	
-	//
+	// result 자료들을 print.
 	class PrintResult implements ResultSetProcess<Void>{
 
 		public Void process(ResultSet resultSet) {
@@ -56,8 +57,14 @@ public class dbTest extends TestCase {
 			try {
 				
 				while (resultSet.next()) {
-					str = resultSet.getNString(1);
-					System.out.println(str);
+					ResultSetMetaData metaData = resultSet.getMetaData();
+					int columnCount = metaData.getColumnCount();
+					
+						String print = "";
+						for (int i = 1; i < columnCount+1; i++) {
+							print += resultSet.getString(i) + "\t";
+						}
+						System.out.println(print);
 				}
 				
 			} catch (SQLException e) {
